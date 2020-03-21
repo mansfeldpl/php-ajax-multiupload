@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+    <h2>Krok 1</h2>
+    <form action="upload.php" method="POST" enctype="multipart/form-data">
+        <div class="custom-file">
+            <label class="custom-file-label" for="inputGroupFile01">Wybierz pliki</label>
+            <input type="file" class="custom-file-input" id="inputGroupFile01" name="image[]" multiple="">
+        </div>
+		 <h2>Krok 2</h2>
+        <input type="submit" value="Wyślij pliki" id="submit">
+    </form>
+    <div class="card-body">
+        <h4 class="card-title">Pliki w trakcie wysyłania, nie zamykaj tego okna… <i class="fa fa-upload"></i></h4>
+        <div class="progress m-t-20">
+            <div class="progress-bar bg-success" style="width: 0%; height:15px;" role="progressbar">0%</div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $('form').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData($(this)[0]);
+            $.ajax({
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function(evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            var progressval = Math.round(percentComplete * 100) + '%';
+                            $('.progress-bar').css('width', progressval);
+                            $('.progress-bar').text(progressval);
+                        }
+                    }, false);
+                    return xhr;
+                },
+                url: "upload.php",
+                method: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                enctype: 'multipart/form-data',
+                success: function(output) {
+                   $('body').append("Plik wysłany");
+                }
+            });
+        });
+		
+		$('#submit').hide();
+		
+		$('#inputGroupFile01').change(function(){
+			$('#submit').show();
+		});
+		
+		
+    </script>
+</body>
+</html>
